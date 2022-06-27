@@ -14,7 +14,6 @@ const MoviesDB = function(movie){
     this.fiveStar = 0;
 };
 
-//6. result is a function passed by the controller that takes in error and data objects
 MoviesDB.create = (newMovie, result) => {
     sql.query("INSERT INTO Movies SET ?", newMovie, (err, res) => {
         if(err) {
@@ -23,7 +22,6 @@ MoviesDB.create = (newMovie, result) => {
             return;
         }
         console.log("added movie: ", {id: res.insertId, ...newMovie });
-        //refer to the controller for result method
         result(null, {id: res.insertId, ...newMovie });
     });
 };
@@ -78,13 +76,6 @@ MoviesDB.update = (id, newMovie, result) => {
     });
 };
 
-//SELECT zeroStar, oneStar, twoStar, threeStar, fourStar, fiveStar FROM ensembleSample.Movies WHERE idMovies = id
-
-//rating object is 
-//{
-    //column: star column name
-    //
-
 MoviesDB.rateMovie = (id, starColumn, result) => {
     sql.query(`SELECT zeroStar, oneStar, twoStar, threeStar, fourStar, fiveStar FROM Movies WHERE idMovies = ${id}`, (err, res) => {
         if(err) {
@@ -95,6 +86,7 @@ MoviesDB.rateMovie = (id, starColumn, result) => {
             let ratings = Object.entries(res[0]);
             let sum = 0;
             let total = 0;
+            //Calculate the overall rating from anonymous votes
             for(let i = 0; i < ratings.length; i++){
                 if(starColumn === ratings[i][0]){
                     sum += i;
@@ -114,8 +106,6 @@ MoviesDB.rateMovie = (id, starColumn, result) => {
                 console.log("new Rating: ", {idMovies: id, rating: overallRating})
                 result(null, {idMovies: id, rating: overallRating})
             });
-            // console.log(ratings[0])
-            // result(null, res);
         } else{
             console.log("No movies found");
             result({kind: "does_not_exist"}, null);
@@ -139,6 +129,18 @@ MoviesDB.remove = (id, result) => {
         }
     });
 };
+
+MoviesDB.removeAll = result => {
+    sql.query("DELETE FROM Movies", (err, res) => {
+        if(err) {
+            console.log("Error ", err);
+            result(null, err);
+            return;
+        }
+        console.log(`Removed ${res.affectedRows} movies`);
+        result(null, res);
+    })
+}
 
 
 module.exports = MoviesDB;

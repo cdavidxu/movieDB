@@ -1,24 +1,17 @@
 const moviesDB = require("../models/moviesDB.js");
 
-//4. the controller methods receive the request
 exports.create = (req, res) => {
     if(!req.body) {
         res.status(400).send({
             message: "Content can not be empty!"
         });
     }
-
-    //the request contains a body with all the necessary attributes, which we use to
-    //construct a new moviesDB model object
-
-    //5. We then call the model class method to invoke the SQL statement
     moviesDB.create(new moviesDB(req.body), (err, data) => {
         if(err){
             res.status(500).send({
                 message: "Error"
             });
         } else{
-            //res.send sends the HTTP response (to the browser ostensibly)
             res.send(data);
         }
     });
@@ -111,6 +104,20 @@ exports.remove = (req, res) => {
         } else{
             res.send({
                 message: "Deleted movie with id " + req.params.id
+            });
+        }
+    });
+};
+
+exports.removeAll = (req, res) => {
+    moviesDB.removeAll((err, data) => {
+        if(err) {
+            res.status(500).send({
+                message: "Could not remove all movies"
+            });
+        } else {
+            res.send({
+                message: "Successfully removed all movies"
             });
         }
     });
