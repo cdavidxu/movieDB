@@ -1,2 +1,2 @@
 # movieDB
-Sample backend API for movie database with basic CRUD functionalities
+Sample backend REST API for movie database with basic CRUD functionalities made with Express and Nodejs
